@@ -4,7 +4,6 @@ import prisma from '@/lib/prisma';
 export async function GET() {
     try {
         const productos = await prisma.producto.findMany();
-
         return NextResponse.json(productos, { status: 200 });
 
     } catch (error) {
@@ -17,7 +16,7 @@ export async function GET() {
     }
 }
 
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
         const { descripcion, nombre, precio, stock, categoriaId, estado, imagen } = body
