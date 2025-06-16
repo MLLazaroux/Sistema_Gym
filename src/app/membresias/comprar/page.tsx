@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroupItem } from "@/components/ui/radio-group"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
@@ -248,19 +248,31 @@ export default function ComprarMembresia() {
                       <CardTitle>Información de Pago</CardTitle>
                       <CardDescription>Ingresa los datos de tu tarjeta para procesar el pago</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-6">
-                      {/* Ciclo de facturación */}
-                      <div className="space-y-2">
-                        <Label>Ciclo de facturación</Label>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem checked id="mensual" value="mensual" />
-                          <Label htmlFor="mensual" className="cursor-pointer">
-                            Mensual
-                          </Label>
-                        </div>
-                      </div>
+                   <CardContent className="space-y-6">
+  {/* Ciclo de facturación */}
+  <div className="space-y-2">
+    <Label>Ciclo de facturación</Label>
+    <RadioGroup
+      defaultValue={billingCycle}
+      onValueChange={setBillingCycle}
+      className="flex flex-col space-y-2"
+    >
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem id="mensual" value="mensual" />
+        <Label htmlFor="mensual" className="cursor-pointer">
+          Mensual
+        </Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem id="anual" value="anual" />
+        <Label htmlFor="anual" className="cursor-pointer">
+          Anual
+        </Label>
+      </div>
+    </RadioGroup>
+  </div>
 
-                      <Separator />
+  <Separator />
 
                       {/* Datos de tarjeta */}
                       <div className="space-y-4">
