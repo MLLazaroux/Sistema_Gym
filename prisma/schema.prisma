@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model rol {
+  rol_id   Int       @id @default(autoincrement())
+  nombre   RoleType  @unique
+  usuarios usuario[]
+}
+
+model usuario {
+  usuario_id     Int         @id @default(autoincrement())
+  nombre         String      @db.VarChar(50)
+  apellido       String      @db.VarChar(50)
+  correo         String      @db.VarChar(100)
+  contrasena     String
+  rol_id         Int
+  fecha_registro DateTime
+  estado         Boolean
+  facturas       factura[]
+  membresias     membresia[]
+  rol            rol         @relation(fields: [rol_id], references: [rol_id])
+  ventas         venta[]
+}
+
+model cliente {
+  cliente_id       Int          @id @default(autoincrement())
+  dni              String       @db.VarChar(10)
+  telefono         String       @db.VarChar(20)
+  fecha_nacimiento DateTime
+  estado           Boolean
+  asistencias      asistencia[]
+  pagos            pago[]
+  ventas           venta[]
+}
+
+model inventario {
+  inventario_id    Int      @id @default(autoincrement())
+  producto_id      Int
+  lote             String   @db.VarChar(20)
+  cantidad         Int
+  fecha_movimiento DateTime
+  motivo           String?
+  producto         producto @relation(fields: [producto_id], references: [producto_id])
+}
+
+model producto {
+  producto_id    Int                @id @default(autoincrement())
+  descripcion    String
+  precio         Float
+  stock          Int
+  estado         Boolean
+  categoriaId    Int
+  nombre         String
+  imagen         String
+  detalle_ventas detalle_venta[]
+  inventarios    inventario[]
+  categoria      categoria_producto @relation(fields: [categoriaId], references: [categoria_id])
+}
+
+model categoria_producto {
+  categoria_id Int            @id @default(autoincrement())
+  nombre       categoriasType @unique
+  producto     producto[]
+}
+
+model venta {
+  venta_id    Int             @id @default(autoincrement())
+  cliente_id  Int
+  fecha_venta DateTime
+  total       Float
+  usuario_id  Int
+  detalles    detalle_venta[]
+  factura     factura[]
+  cliente     cliente         @relation(fields: [cliente_id], references: [cliente_id])
+  usuario     usuario         @relation(fields: [usuario_id], references: [usuario_id])
+}
+
+model detalle_venta {
+  detalle_venta_id Int      @id @default(autoincrement())
+  venta_id         Int
+  producto_id      Int
+  cantidad         Int
+  precio_unitario  Float
+  subtotal         Float
+  producto         producto @relation(fields: [producto_id], references: [producto_id])
+  venta            venta    @relation(fields: [venta_id], references: [venta_id])
+}
+
+model membresia {
+  membresia_id Int      @id @default(autoincrement())
+  perfil_id    Int
+  usuario_id   Int
+  fecha_inicio DateTime
+  duracion     Int
+  estado       Boolean
+  perfil       perfil   @relation(fields: [perfil_id], references: [perfil_id])
+  usuario      usuario  @relation(fields: [usuario_id], references: [usuario_id])
+  pagos        pago[]
+}
+
+model perfil {
+  perfil_id   Int         @id @default(autoincrement())
+  nombre      String      @db.VarChar(50)
+  descripcion String?
+  membresias  membresia[]
+}
+
+model pago {
+  pago_id     Int       @id @default(autoincrement())
+  contrato_id Int
+  cliente_id  Int
+  metodo_pago String
+  numero_pago String
+  fecha_pago  DateTime
+  monto       Float
+  cliente     cliente   @relation(fields: [cliente_id], references: [cliente_id])
+  contrato    membresia @relation(fields: [contrato_id], references: [membresia_id])
+}
+
+model factura {
+  factura_id         Int      @id @default(autoincrement())
+  tipo_comprobante   String
+  numero_comprobante String
+  fecha_emision      DateTime
+  venta_id           Int
+  total              Float
+  usuario_id         Int
+  usuario            usuario  @relation(fields: [usuario_id], references: [usuario_id])
+  venta              venta    @relation(fields: [venta_id], references: [venta_id])
+}
+
+model asistencia {
+  asistencia_id  Int      @id @default(autoincrement())
+  cliente_id     Int
+  fecha          DateTime
+  hora_entrada   DateTime
+  hora_salida    DateTime
+  metodo_ingreso String
+  estado         Boolean
+  cliente        cliente  @relation(fields: [cliente_id], references: [cliente_id])
+}
+
+enum RoleType {
+  Administrador
+  Recepcionista
+  Cliente
+  Entrenador
+}
+
+enum categoriasType {
+  Suplementos
+  Ropa
+  Accesorios
+}
