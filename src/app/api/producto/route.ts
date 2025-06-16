@@ -4,7 +4,13 @@ import prisma from '@/lib/prisma';
 export async function GET() {
     try {
         const productos = await prisma.producto.findMany();
-        return NextResponse.json(productos, { status: 200 });
+
+const productosMapeados = productos.map(p => ({
+  ...p,
+  id: p.producto_id, // ✅ Renombramos producto_id a id
+}));
+
+return NextResponse.json(productosMapeados, { status: 200 });
 
     } catch (error) {
         return NextResponse.json(
